@@ -1,0 +1,56 @@
+body, html{
+	margin: 0;
+	padding: 0;
+	background: #000000;
+	overflow: hidden;
+}
+
+.container{
+
+	background: url('assets/back.jpg') 0 0;
+	width: 90%;
+	height: 100%;
+	position: absolute;
+}
+
+#sniper{
+	position: absolute;
+	display: block;
+	width: 52px;
+	height: 63px;
+	background: url('assets/sniper.png') 0 0;
+	top: 400px;
+	left: 400px;
+
+}
+
+#sniper::after{
+	content: '';
+	display: block;
+	background: url('assets/line.png') no-repeat;
+	height: 400px;
+	margin: -400px 13px;
+
+}
+
+.rocket{
+	position: absolute;
+	display: block;
+	width: 26px;
+	height: 48px;
+	background: url('assets/rocket.png') 0 0;
+}
+
+.explosion{
+	margin: -50px -50px;
+	position: absolute;
+	display: block;
+	width: 130px;
+	height: 128px;
+	background: url('assets/explosion.png') 0 0;
+
+}
+
+#logX, #logY, #hypo, #rot{
+	display: none;
+}
