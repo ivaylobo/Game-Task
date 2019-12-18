@@ -1,56 +1,108 @@
-body, html{
-	margin: 0;
-	padding: 0;
-	background: #000000;
-	overflow: hidden;
+body,
+html {
+    margin: 0;
+    padding: 0;
+    background: #000000;
+    overflow: hidden;
 }
 
-.container{
-
-	background: url('assets/back.jpg') 0 0;
-	width: 90%;
-	height: 100%;
-	position: absolute;
+.container {
+    background: url('assets/back.jpg') 0 0;
+    width: 90%;
+    height: 100%;
+    position: absolute;
 }
 
-#sniper{
-	position: absolute;
-	display: block;
-	width: 52px;
-	height: 63px;
-	background: url('assets/sniper.png') 0 0;
-	top: 400px;
-	left: 400px;
-
+#sniper,
+.enemy {
+    position: absolute;
+    display: block;
+    width: 52px;
+    height: 63px;
+    background: url('assets/sniper.png') 0 0;
+    top: 400px;
+    left: 400px;
 }
 
-#sniper::after{
-	content: '';
-	display: block;
-	background: url('assets/line.png') no-repeat;
-	height: 400px;
-	margin: -400px 13px;
-
+#sniper.inMotion {
+    animation: walk 0.5s steps(8) infinite
 }
 
-.rocket{
-	position: absolute;
-	display: block;
-	width: 26px;
-	height: 48px;
-	background: url('assets/rocket.png') 0 0;
+#sniper::after {
+    content: '';
+    display: block;
+    background: url('assets/line.png') no-repeat;
+    height: 400px;
+    margin: -400px 13px;
 }
 
-.explosion{
-	margin: -50px -50px;
-	position: absolute;
-	display: block;
-	width: 130px;
-	height: 128px;
-	background: url('assets/explosion.png') 0 0;
-
+.rocket {
+    position: absolute;
+    display: block;
+    width: 26px;
+    height: 48px;
+    background: url('assets/rocket.png') 0 0;
+    animation: rocketFly 1s steps(4) infinite;
 }
 
-#logX, #logY, #hypo, #rot{
-	display: none;
+.explosion {
+    margin: -50px -50px;
+    position: absolute;
+    display: block;
+    width: 128px;
+    height: 128px;
+    background: url('assets/explosion.png') 0 0;
+    animation: explode 0.8s steps(31) infinite;
+}
+
+#logX,
+#logY,
+#hypo,
+#rot {
+    display: none;
+}
+
+.enemy {
+    width: 50px;
+    height: 55px;
+    background-image: url('assets/gnom.png');
+    top: 0;
+    left: 0;
+    animation: stepEnemy 1s steps(8) infinite;
+}
+
+@keyframes stepEnemy {
+    from {
+        background-position: 0;
+    }
+    to {
+        background-position: 424px;
+    }
+}
+
+@keyframes rocketFly {
+    from {
+        background-position: 0;
+    }
+    to {
+        background-position: 104px;
+    }
+}
+
+@keyframes explode {
+    from {
+        background-position: 0;
+    }
+    to {
+        background-position: 3968px;
+    }
+}
+
+@keyframes walk {
+    from {
+        background-position: 0;
+    }
+    to {
+        background-position: 424px;
+    }
 }

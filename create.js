@@ -1,53 +1,65 @@
 // .................................................this method creates new game objects.........................................
 
-$(document).ready(function() {
+(function() {
 
-	var rocketIdentifier = 0;
-	var explosionIdentifier = 0;
+    var rocketIdentifier = 0;
+    var explosionIdentifier = 0;
+    var enemyIndentifier = 0;
 
-	gameObject.prototype.createEl = function (el){
-
-
-		var newElement = new gameObject(el.leftMargin, el.picturesNumber , el.domName, el.animeCondition); // new game object
-
-		if(el.domName === '.rocket'){  // object of type rocket
-			$('<div/>', {
-			    id: rocketIdentifier,
-			    class: 'rocket'
-			}).appendTo('.container');
-
-			newElement.identifier = rocketIdentifier;
-
-			rocketIdentifier ++;
-		}
-
-		else if(el.domName === '.explosion'){  // object of type explosion
-			$('<div/>', {
-			    id: 'e'+explosionIdentifier,
-			    class: 'explosion'
-			}).appendTo('.container');
-
-			newElement.identifier = 'e'+explosionIdentifier;
-
-			explosionIdentifier++;
-		};
-
-		return newElement;
-	};
+    gameObject.prototype.createEl = function(el) {
 
 
+        var newElement = new gameObject(el.domName, el.animeCondition); // new game object
+
+        if (el.domName === '.rocket') { // object of type rocket
+
+            createNewElement('rocket', rocketIdentifier, 'r');
+
+            rocketIdentifier++;
+
+        } else if (el.domName === '.explosion') { // object of type explosion
+
+            createNewElement('explosion', explosionIdentifier, 'e');
+
+            explosionIdentifier++;
+
+        } else if (el.domName === '.enemy') {
+
+            createNewElement('enemy', enemyIndentifier, 'en');
+
+            enemyIndentifier++;
+        }
+
+        function createNewElement(className, identifier, letter) {
+
+            var newEl = document.createElement('div');
+
+            newEl.className += className;
+
+            newEl.id = letter + identifier;
+
+            document.querySelector('.container').appendChild(newEl);
+
+            newElement.identifier = newEl.id;
+
+        }
+
+        return newElement;
+    };
 
 
 
-// ...................... this method destroys game objects ............................
+
+
+    // ...................... this method destroys game objects ............................
 
 
 
 
-	gameObject.prototype.destroy = function (el){
+    gameObject.prototype.removeHTML = function(el) {
 
-		$("#" +el.identifier).remove();
+        document.querySelector("#" + el.identifier).remove();
 
-	};
+    };
 
-});
+})();

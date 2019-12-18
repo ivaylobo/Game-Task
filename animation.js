@@ -1,181 +1,135 @@
-
 // ............ this is the animation section of my code ....................
 
+(function(GDP, RotateCtrl) {
 
 
-$(document).ready(function() {
-	
-		var animate = 0;
-		var animateSniper = 0;
-		var animateRocket = 0;
-		var animateExplosion = 0;
-		var animateExplosionArray = {};
+    // .............................  this method changes positions of the game objects .........................
 
+    var gameFinished = false;
 
-		function ajustObj(obj) { // keeps animation properties of diferent objects separated
+    gameObject.prototype.moveObjects = function(obj, inMotion) {
 
-			var marg = obj.leftMargin;
-			var name = obj.domName;
-			var count = obj.picturesNumber;
+        var dom = obj.domName;
 
-			switch(name){
-				case '#sniper':
-					animateSniper+=marg;
-					animate = animateSniper;
-					break
-				case '.rocket':
-					animateRocket+=marg;
-					animate = animateRocket;
-					break
-				case '.explosion':
+        if (inMotion) {
+            clearTimeout(obj.moveInterval)
+        }
 
-					if(animateExplosionArray[obj.identifier]){ 					// if that explosion already exists
-					animateExplosion = animateExplosionArray[obj.identifier]; 	// save it's background position to array,
-					animateExplosion+=marg; 									// change backgroun podition of current explosion,
-					animate = animateExplosion; 								// set it to be returned
+        var speed = 1;
 
-					}
-					else{
-					animateExplosion+=marg;
-					animate = animateExplosion;
+        if (dom === '.rocket') { // defines speed position and rotation of the rocket when before animate function
 
-					}
+            speed = speed * 3;
 
-					animateExplosionArray[obj.identifier] = animate;
+            var degrees = GDP.sniper.rotation;
 
-					break
-				default:
-					animateSniper = 0;					
-				break;
-			}
+            dom = '#' + obj.identifier;
 
-			if(name === '.explosion' && marg*count<animate){
-				animateExplosion = 0;
-				animate = 0;
-			}
-			return animate;
-		}
+            document.querySelector(dom).style.top = document.querySelector(sniper.domName).offsetTop;
+            document.querySelector(dom).style.left = document.querySelector(sniper.domName).offsetLeft;
+            document.querySelector(dom).style.transform = 'rotate(' + degrees + 'deg)';
 
-		gameObject.prototype.animateObject = function (obj, num) { // animation function
+            GDP.rockets.push({ x: 0, y: 0, n: obj.identifier });
+        }
 
+        var leftP = GDP.mouse.x;
+        var topP = GDP.mouse.y;
 
-			var name = obj.domName;
-			var objCount = obj.picturesNumber;
-			var objMargin = obj.leftMargin;
+        if (dom === '.enemy') {
+            dom = '#' + obj.identifier;
+            speed = 0.2;
+            leftP = GDP.sniper.x
+            topP = GDP.sniper.y
+        }
 
-			var speedAnime = 100;
+        function animateTo(dom_elem, x, y, finishedCallback) {
+            var pos = {
+                x: dom_elem.offsetLeft,
+                y: dom_elem.offsetTop
+            };
 
-			animate = ajustObj(obj);
-	
+            var negativeX = x - pos.x < 0 ? true : false;
+            var negativeY = y - pos.y < 0 ? true : false;
 
-			if(obj.animeCondition === false){     // defines if the object have to be animated
-				$(name).css({
-				'background-position': '0px '+'0px'
-				});
-				ajustObj(obj.leftMargin, 5);		// restart sniper animation
-				animate = 0;
-				return;
-			}
+            function animate() {
 
-		 	if(num !== 1){                   // Defines if the function is called from recurtion, 
-				if(animate>objMargin){		 // if not, defines if the function is already executing
-					return;
-				}
+                if (obj.domName === '#sniper') {
 
-			}	
+                    GDP.enemies.forEach(function(el, ind) {
+                        elementObj = { n: '#' + el.n, x: el.x, y: el.y, i: 2 }
+                        RotateCtrl.calulateAnge(elementObj, GDP.sniper);
+                    });
 
-			if(obj.domName !== '#sniper'){
+                }
 
-				speedAnime = 30;
-			}
+                if (obj.domName === '.rocket') {
+                    var match = GDP.checkForMatch(GDP.rockets, GDP.enemies)
+                    if (match) {
+                        var enemy = match[1],
+                            enemyID = enemy.n,
+                            clearFromEnemiesArray = enemiesArray.findIndexOf('identifier', enemyID),
+                            enemyKilled = new CustomEvent('EnemyKilled', { detail: { enemy, position: { leftP, topP } } });
 
-			if(name === '.explosion'){               // if the object is explosion, set it's id for the animation
+                        enemiesArray.splice(clearFromEnemiesArray, 1)
+                        enemy.domName = '.enemy';
 
-				if(((objCount-1)*objMargin)<animate){ // if the animation finishes, destroy DOM object and set animation condition to false
-					
-					obj.destroy(obj);
-				};
+                        document.dispatchEvent(enemyKilled);
+                        clearTimeout(obj.moveInterval);
+                        // finishedCallback();
+                        // return
+                    }
+                }
 
-				name = $("#"+obj.identifier)
-			}
+                if (obj.domName === '.enemy') {
+                    var match = GDP.checkForMatch(GDP.enemies, [GDP.sniper])
+                    if (match && !gameFinished) {
+                        var gameOver = new CustomEvent('GameOver');
+                        document.dispatchEvent(gameOver);
+                        gameFinished = true;
+                    }
+                }
 
+                GDP.updatePositions(obj, pos.x, pos.y);
+                var xToTarget = x - pos.x;
+                var yToTarget = y - pos.y;
 
-			$(name).css({
-				'background-position': animate +'px '+'0px'
+                xToTarget = negativeX ? Math.min(0, xToTarget) : Math.max(0, xToTarget);
+                yToTarget = negativeY ? Math.min(0, yToTarget) : Math.max(0, yToTarget);
 
-			});	
+                if ((xToTarget == 0 && yToTarget == 0) || obj.switchAnimations) {
 
-				setTimeout(function (){obj.animateObject(obj, 1);}, speedAnime);
-				
-		};
+                    if (obj.domName === '#sniper') {
+                        document.querySelector(obj.domName).classList.remove('inMotion');
+                    }
+                    clearTimeout(obj.moveInterval);
+                    finishedCallback();
+                    return
+                }
 
+                var scale = speed / Math.sqrt(Math.pow(xToTarget, 2) + Math.pow(yToTarget, 2));
 
+                var delta_x = xToTarget * scale;
+                var delta_y = yToTarget * scale;
 
-// .............................  this method changes positions of the game objects .........................
+                pos.x += delta_x;
+                pos.y += delta_y;
+                dom_elem.style.left = pos.x + 'px';
+                dom_elem.style.top = pos.y + 'px';
+                obj.moveInterval = setTimeout(animate, 1);
+            }
 
+            obj.moveTimeout = setTimeout(animate, 1);
 
+        }
 
+        animateTo(document.querySelector(dom), leftP, topP, clearAnimation)
 
-gameObject.prototype.moveObjects = function(obj){
+        function clearAnimation() {
+            var clearAnim = new CustomEvent('ClearAnimation', { detail: { obj, position: { leftP, topP } } });
+            document.dispatchEvent(clearAnim);
+            obj.animeCondition = false;
+        }
 
-	var dom = obj.domName;
+    }
 
-	if(obj.domName === '#sniper'){ // to remember the position of sniper if other object moves
-
-
-	var left = $(dom).position.x;   
-	var top = $(dom).position.y;
-
-	$(dom).stop(10);
-
-	$(dom).position.x = left;
-	$(dom).position.y = top;
-
-	}
-
-	var distance = $('#hypo').text();
-
-	var speed = distance*5;
-
-	if(dom === '.rocket'){ // defines speed position and rotation of the rocket when before animate function
-
-
-		speed = speed/5;
-
-		var degrees = $('#rot').text();
-
-		dom = '#'+obj.identifier;
-
-		$(dom).css({
-			top: $(sniper.domName).offset().top,
-			left:  $(sniper.domName).offset().left,
-			'-webkit-transform' : 'rotate('+ degrees +'deg)',
-             '-moz-transform' : 'rotate('+ degrees +'deg)',
-             '-ms-transform' : 'rotate('+ degrees +'deg)',
-             'transform' : 'rotate('+ degrees +'deg)'
-
-		});
-
-
-	}
-		var leftP = $("#logX").text();
-		var topP = $("#logY").text();
-
-		$(dom).animate({ //  animates the movement of every game object
-			left: leftP,
-			top: topP
-		},
-			speed, 'linear', function(){
-				if(obj.domName === '#sniper'){       // when the object is animated, if it is 'sniper' - stop animate, if it is rocket, go to controler method
-					sniper.animeCondition = false;
-				}
-				else{
-					obj.animeCondition = true;
-					gameEventController(obj, leftP, topP );
-				}
-			
-		});
-	}
-
-});
-
+})(GameDynamicPositions, RotateController)
