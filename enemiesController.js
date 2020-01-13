@@ -1,24 +1,25 @@
 // enemies controller
 
-var EnemiesController = (function(RotateCtrl, GDP) {
+let EnemiesController = ((RotateCtrl, GDP) => {
 
     return {
-        createEnemies: function() {
-            var newEnemy = enemy.createEl(enemy);
+        createEnemies: () => {
+            let newEnemy = enemy.createEl(enemy);
             newEnemy.animeCondition = true;
             return newEnemy;
         },
 
-        enemyPosition: function(enemy) {
-            var width = document.querySelector('.container').offsetWidth - 63,
+        enemyPosition: (enemy) => {
+
+            let getRandomInt = (max) => {
+                return Math.floor(Math.random() * Math.floor(max));
+            }
+            let width = document.querySelector('.container').offsetWidth - 63,
                 height = document.querySelector('.container').offsetHeight - 63,
                 left = 0,
                 top = 0,
                 randomSideForEntrance = getRandomInt(4);
 
-            function getRandomInt(max) {
-                return Math.floor(Math.random() * Math.floor(max));
-            }
 
             if (randomSideForEntrance === 0) {
                 left = 0
@@ -34,10 +35,10 @@ var EnemiesController = (function(RotateCtrl, GDP) {
                 left = getRandomInt(width)
             }
 
-            document.querySelector('#' + enemy.identifier).style.left = left;
-            document.querySelector('#' + enemy.identifier).style.top = top;
+            document.querySelector(`#${enemy.identifier}`).style.left = left;
+            document.querySelector(`#${enemy.identifier}`).style.top = top;
             GDP.enemies.push({ x: left, y: top, n: enemy.identifier })
-            elementObj = { n: '#' + enemy.identifier, x: left, y: top, i: 2 }
+            elementObj = { n: `#${enemy.identifier}`, x: left, y: top, i: 2 }
             RotateCtrl.calulateAnge(elementObj, GDP.sniper);
 
         }
@@ -46,9 +47,9 @@ var EnemiesController = (function(RotateCtrl, GDP) {
 })(RotateController, GameDynamicPositions)
 
 
-var enemiesArray = [];
-setInterval(function() {
+let enemiesArray = [];
 
+let moveEnemies = () => {
     enemiesArray.forEach(function(el) {
         el.moveObjects(el, 1);
     })
@@ -56,9 +57,10 @@ setInterval(function() {
     if (GameDynamicPositions.enemies.length > 3) {
         return
     }
-    var newEnemy = EnemiesController.createEnemies();
+    let newEnemy = EnemiesController.createEnemies();
     enemiesArray.push(newEnemy);
     EnemiesController.enemyPosition(newEnemy);
     newEnemy.moveObjects(newEnemy);
+}
 
-}, 1000);
+setInterval(moveEnemies, showingSpeed);

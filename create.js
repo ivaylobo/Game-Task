@@ -1,15 +1,29 @@
 // .................................................this method creates new game objects.........................................
 
-(function() {
+{
 
-    var rocketIdentifier = 0;
-    var explosionIdentifier = 0;
-    var enemyIndentifier = 0;
+    let rocketIdentifier = 0,
+        explosionIdentifier = 0,
+        enemyIndentifier = 0;
 
-    gameObject.prototype.createEl = function(el) {
+    gameObject.prototype.createEl = (el) => {
 
 
-        var newElement = new gameObject(el.domName, el.animeCondition); // new game object
+        let newElement = new gameObject(el.domName, el.animeCondition); // new game object
+
+        let createNewElement = (className, identifier, letter) => {
+
+            let newEl = document.createElement('div');
+
+            newEl.className += className;
+
+            newEl.id = letter + identifier;
+
+            document.querySelector('.container').appendChild(newEl);
+
+            newElement.identifier = newEl.id;
+
+        }
 
         if (el.domName === '.rocket') { // object of type rocket
 
@@ -30,19 +44,7 @@
             enemyIndentifier++;
         }
 
-        function createNewElement(className, identifier, letter) {
 
-            var newEl = document.createElement('div');
-
-            newEl.className += className;
-
-            newEl.id = letter + identifier;
-
-            document.querySelector('.container').appendChild(newEl);
-
-            newElement.identifier = newEl.id;
-
-        }
 
         return newElement;
     };
@@ -56,10 +58,10 @@
 
 
 
-    gameObject.prototype.removeHTML = function(el) {
+    gameObject.prototype.removeHTML = (el) => {
 
-        document.querySelector("#" + el.identifier).remove();
+        document.querySelector(`#${el.identifier}`).remove();
 
     };
 
-})();
+}
