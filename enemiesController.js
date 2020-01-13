@@ -1,6 +1,6 @@
 // enemies controller
 
-let EnemiesController = ((RotateCtrl, GDP) => {
+const EnemiesController = ((RotateCtrl, GDP) => {
 
     return {
         createEnemies: () => {
@@ -49,7 +49,7 @@ let EnemiesController = ((RotateCtrl, GDP) => {
 
 let enemiesArray = [];
 
-let moveEnemies = () => {
+const moveEnemies = () => {
     enemiesArray.forEach(function(el) {
         el.moveObjects(el, 1);
     })

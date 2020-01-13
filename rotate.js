@@ -1,19 +1,19 @@
 // ...........this method gets the position of the mouse and rotates sniper in direction of the position ...........
 
-var RotateController = (function(GDP) {
+const RotateController = (function(GDP) {
 
-    var degrees;
+    let degrees;
 
     return {
         calulateAnge: function(el, target) { // this function calculates the angle between object and mouse and rotates the object
 
-            var cathetus1 = target['x'] - el['x'];
-            var cathetus2 = target['y'] - el['y'];
-            var hypo = 0;
+            let cathetus1 = target['x'] - el['x'];
+            let cathetus2 = target['y'] - el['y'];
+            let hypo = 0;
 
             if (el['y'] > target['y']) {
-                var cathetus1 = el['x'] - target['x'];
-                var cathetus2 = el['y'] - target['y'];
+                let cathetus1 = el['x'] - target['x'];
+                let cathetus2 = el['y'] - target['y'];
 
 
                 hypo = Math.sqrt((cathetus1 * cathetus1) + (cathetus2 * cathetus2));

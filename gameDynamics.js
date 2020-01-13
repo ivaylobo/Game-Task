@@ -15,12 +15,14 @@ let GameDynamicPositions = {
                 break
 
             case '.rocket':
+
                 index = this.rockets.findIndexOf('n', obj.identifier);
                 this.rockets[index].x = x;
                 this.rockets[index].y = y;
 
                 break
             case '.enemy':
+
                 index = this.enemies.findIndexOf('n', obj.identifier);
                 if (this.enemies[index]) {
                     this.enemies[index].x = x;
