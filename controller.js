@@ -17,7 +17,7 @@ const sniper = new gameObject('#sniper', true),
 let killedEnemiesCount = 0,
     enemiesSpeed = 0.1,
     level = 1,
-    showingSpeed = 1000;
+    showingSpeed = 1000
 
 
 const gameEventController = function(obj, leftPos, topPos, evName) { // controls events started from other game events
@@ -57,18 +57,6 @@ const gameEventController = function(obj, leftPos, topPos, evName) { // controls
         GameDynamicPositions.enemies.splice(index, 1);
     }
 
-    let finishGame = (win) => {
-
-        if (!win) {
-            alert('Game Over! You lose!')
-            window.location.reload();
-            return
-        }
-        alert('Game Over! You Win!')
-        window.location.reload();
-
-    }
-
     if (obj.domName === '.rocket' && evName === 'ClearAnimation') {
 
         fireExplosion()
@@ -84,10 +72,10 @@ const gameEventController = function(obj, leftPos, topPos, evName) { // controls
     } else if (evName === 'GameOver') {
 
         if (obj) {
-            finishGame(true);
+            GameActionsCtrl.finishGame(true);
             return
         }
-        finishGame(false);
+        GameActionsCtrl.finishGame(false);
 
     }
 
@@ -176,21 +164,14 @@ document.addEventListener('EarlierExplosion', (e) => {
 
 
 
-const MouseEventsController = ((RotateCtrl) => {
+const UserEventsController = ((RotateCtrl) => {
 
     const container = document.querySelector('.container');
 
     let onMouseDown = (event) => { // mouse event controller
         switch (event.keyCode || event.which) {
             case 3:
-                if (!sniper.animeCondition) {
-                    sniper.animeCondition = true;
-                    sniper.moveObjects(sniper);
-                } else {
-                    sniper.moveObjects(sniper, 1);
-                }
-
-                document.querySelector(sniper.domName).classList.add('inMotion');
+                moveSniper()
 
                 break;
             case 1:
@@ -205,6 +186,52 @@ const MouseEventsController = ((RotateCtrl) => {
 
     };
 
+    let direction;
+
+    document.body.addEventListener('keydown', (e) => {
+        if (e.keyCode == 32) {
+            GameActionsCtrl.pauseGame();
+        } else if (e.keyCode == 39) {
+            const rightTo = document.querySelector('.container').offsetWidth;
+            moveSniper({ left: rightTo, top: GameDynamicPositions.sniper.y })
+            direction = 'right'
+        } else if (e.keyCode == 37) {
+            moveSniper({ left: 1, top: GameDynamicPositions.sniper.y })
+            direction = 'left'
+        } else if (e.keyCode == 38) {
+            moveSniper({ left: GameDynamicPositions.sniper.x, top: 1 })
+            direction = 'top'
+        } else if (e.keyCode == 40) {
+            const topTo = document.querySelector('.container').offsetHeight
+            moveSniper({ left: GameDynamicPositions.sniper.x, top: topTo })
+            direction = 'bottom'
+        }
+
+
+    });
+
+    document.body.addEventListener('keyup', (e) => {
+        if ((e.keyCode == 39 && direction == 'right') ||
+            (e.keyCode == 37 && direction == 'left') ||
+            (e.keyCode == 38 && direction == 'top') ||
+            (e.keyCode == 40) && direction == 'bottom') {
+            moveSniper({ left: GameDynamicPositions.sniper.x, top: GameDynamicPositions.sniper.y })
+        }
+
+    });
+
+    let moveSniper = (direction) => {
+
+        if (!sniper.animeCondition) {
+            sniper.animeCondition = true;
+            sniper.moveObjects(sniper, -1, direction);
+        } else {
+            sniper.moveObjects(sniper, 1, direction);
+        }
+
+        document.querySelector(sniper.domName).classList.add('inMotion');
+    }
+
     let onMouseMove = (e) => {
 
         GameDynamicPositions.mouse = { x: e.pageX, y: e.pageY, i: 1 };
@@ -214,7 +241,6 @@ const MouseEventsController = ((RotateCtrl) => {
         elementObj = { n: element, x: document.querySelector(element).offsetLeft, y: document.querySelector(element).offsetTop, i: 2 }
 
         RotateCtrl.calulateAnge(elementObj, GameDynamicPositions.mouse);
-
 
     }
 
@@ -227,8 +253,8 @@ const MouseEventsController = ((RotateCtrl) => {
             container.addEventListener('mousemove', function(event) {
                 onMouseMove(event);
             });
-        },
+        }
     }
 })(RotateController);
 
-MouseEventsController.init();
+UserEventsController.init();

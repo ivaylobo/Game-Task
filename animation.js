@@ -7,7 +7,7 @@
 
     let gameFinished = false;
 
-    gameObject.prototype.moveObjects = (obj, inMotion) => {
+    gameObject.prototype.moveObjects = (obj, inMotion, direction = false) => {
 
         let dom = obj.domName;
 
@@ -32,8 +32,8 @@
             GDP.rockets.push({ x: 0, y: 0, n: obj.identifier });
         }
 
-        let leftP = GDP.mouse.x;
-        let topP = GDP.mouse.y;
+        let leftP = direction.left ? direction.left : GDP.mouse.x;
+        let topP = direction.top ? direction.top : GDP.mouse.y;
 
         if (dom === '.enemy') {
             dom = `#${obj.identifier}`;
@@ -131,7 +131,7 @@
             const clearAnim = new CustomEvent('ClearAnimation', { detail: { obj, position: { leftP, topP } } });
             document.dispatchEvent(clearAnim);
             obj.animeCondition = false;
-            return 5
+            return
         }
 
         animateTo(document.querySelector(dom), leftP, topP, clearAnimation)
