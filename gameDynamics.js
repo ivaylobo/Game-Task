@@ -1,4 +1,4 @@
-let GameDynamicPositions = {
+const GameDynamicPositions = {
     mouse: {},
     sniper: { n: 'sniper', x: 400, y: 400, i: 2 },
     rockets: [],

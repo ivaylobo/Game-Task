@@ -43,7 +43,7 @@
             topP = GDP.sniper.y
         }
 
-        let animateTo = (dom_elem, x, y, finishedCallback) => {
+        const animateTo = (dom_elem, x, y, finishedCallback) => {
             let pos = {
                 x: dom_elem.offsetLeft,
                 y: dom_elem.offsetTop
@@ -127,7 +127,7 @@
 
         }
 
-        let clearAnimation = () => {
+        const clearAnimation = () => {
             const clearAnim = new CustomEvent('ClearAnimation', { detail: { obj, position: { leftP, topP } } });
             document.dispatchEvent(clearAnim);
             obj.animeCondition = false;

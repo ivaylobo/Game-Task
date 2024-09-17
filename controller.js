@@ -42,13 +42,13 @@ const gameEventController = function(obj, leftPos, topPos, evName) { // controls
         GameDynamicPositions.rockets.splice(index, 1);
     }
 
-    let redirectMovingObject = () => {
+    const redirectMovingObject = () => {
 
         document.querySelector(obj.domName).style.backgroundPosition = '0 0';
 
     }
 
-    let deleteEnemy = () => {
+    const deleteEnemy = () => {
 
         let index = GameDynamicPositions.enemies.findIndexOf('n', obj.n);
 
@@ -232,7 +232,7 @@ const UserEventsController = ((RotateCtrl) => {
         document.querySelector(sniper.domName).classList.add('inMotion');
     }
 
-    let onMouseMove = (e) => {
+    const onMouseMove = (e) => {
 
         GameDynamicPositions.mouse = { x: e.pageX, y: e.pageY, i: 1 };
         const element = sniper.domName;
