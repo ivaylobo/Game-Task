@@ -9,9 +9,9 @@
     gameObject.prototype.createEl = (el) => {
 
 
-        let newElement = new gameObject(el.domName, el.animeCondition); // new game object
+        const newElement = new gameObject(el.domName, el.animeCondition); // new game object
 
-        let createNewElement = (className, identifier, letter) => {
+        const createNewElement = (className, identifier, letter) => {
 
             let newEl = document.createElement('div');
 

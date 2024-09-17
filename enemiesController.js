@@ -11,7 +11,7 @@ const EnemiesController = ((RotateCtrl, GDP) => {
 
         enemyPosition: (enemy) => {
 
-            let getRandomInt = (max) => {
+            const getRandomInt = (max) => {
                 return Math.floor(Math.random() * Math.floor(max));
             }
             let width = document.querySelector('.container').offsetWidth - 63,
@@ -47,7 +47,7 @@ const EnemiesController = ((RotateCtrl, GDP) => {
 })(RotateController, GameDynamicPositions)
 
 
-let enemiesArray = [];
+const enemiesArray = [];
 
 const moveEnemies = () => {
     enemiesArray.forEach(function(el) {
